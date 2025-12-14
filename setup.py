@@ -22,7 +22,7 @@ setup(
     python_requires='>=3.9',
     install_requires=['tenacity', 'httpx', 'nest_asyncio'],
     test_suite='tests',
-    tests_require=['vcrpy'],
+    tests_require=['vcrpy>=8.0'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

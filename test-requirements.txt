@@ -1,2 +1,2 @@
 coverage
-git+https://github.com/danielnsilva/vcrpy.git
+vcrpy>=8.0

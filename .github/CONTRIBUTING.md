@@ -75,17 +75,12 @@ Then, run the tests:
 
 ### Recording API Calls
 
-This project uses a [modified version](https://github.com/danielnsilva/vcrpy)
-of [VCR.py](https://github.com/kevin1024/vcrpy), a library designed to record
-HTTP interactions and replay them during tests, eliminating the need to make
-actual HTTP requests repeatedly.
+This project uses [VCR.py](https://github.com/kevin1024/vcrpy), a library
+designed to record HTTP interactions and replay them during tests, eliminating
+the need to make actual HTTP requests repeatedly.
 
 When adding new tests, the first run will record the interactions and save them
 as a new file in the `tests/data` directory.
-
-The modification ensures that **unused recorded interactions are removed**
-during the test run. This helps to maintain clean and relevant recorded data,
-avoiding the accumulation of outdated or unnecessary interactions over time.
 
 ### Code coverage
 
