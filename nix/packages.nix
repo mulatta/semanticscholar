@@ -3,23 +3,38 @@
     { pkgs, ... }:
     let
       python = pkgs.python3;
-    in
-    {
-      packages.default = python.pkgs.buildPythonApplication {
-        pname = "semanticscholar-mcp";
+      semanticscholar = python.pkgs.buildPythonApplication {
+        pname = "semanticscholar";
         version = "0.11.0";
-        format = "setuptools";
-        src = ../.;
+        pyproject = true;
+        src = pkgs.lib.fileset.toSource {
+          root = ../.;
+          fileset = pkgs.lib.fileset.unions [
+            ../pyproject.toml
+            ../README.md
+            ../semanticscholar
+          ];
+        };
 
-        propagatedBuildInputs = with python.pkgs; [
+        build-system = with python.pkgs; [ setuptools ];
+
+        dependencies = with python.pkgs; [
           httpx
-          mcp
           nest-asyncio
-          setuptools
           tenacity
         ];
 
         doCheck = false;
+      };
+    in
+    {
+      packages = {
+        inherit semanticscholar;
+        default = semanticscholar;
+      };
+
+      checks = {
+        inherit semanticscholar;
       };
     };
 }
