@@ -14,6 +14,7 @@ from semanticscholar.Paper import Paper
 from semanticscholar.Reference import Reference
 from semanticscholar.Release import Release
 from semanticscholar.Autocomplete import Autocomplete
+from semanticscholar.SnippetSearchResult import Snippet, SnippetSearchResult
 
 logger = logging.getLogger("semanticscholar")
 
@@ -780,6 +781,118 @@ class AsyncSemanticScholar:
         papers = [Paper(item) for item in data["recommendedPapers"]]
 
         return papers
+
+    async def search_snippet(
+        self,
+        query: str,
+        paper_ids: List[str] = None,
+        authors: List[str] = None,
+        year: str = None,
+        venue: list = None,
+        fields_of_study: list = None,
+        fields: list = None,
+        publication_date_or_year: str = None,
+        min_citation_count: int = None,
+        inserted_before: str = None,
+        limit: int = 10,
+    ) -> List[SnippetSearchResult]:
+        """
+        Search for snippets from papers matching the query.
+
+        :calls: `GET /graph/v1/snippet/search \
+            <https://api.semanticscholar.org/api-docs/graph#tag/Paper-Data\
+            /operation/get_graph_snippet_search>`_
+
+        :param str query: plain-text search query string.
+        :param list paper_ids: (optional) list of paper IDs to restrict
+               search to (max ~100).
+        :param list authors: (optional) list of author IDs to restrict
+               search to (max 10).
+        :param str year: (optional) restrict results to the given range of
+               publication year.
+        :param list venue: (optional) restrict results to the given venue
+               list.
+        :param list fields_of_study: (optional) restrict results to given
+               field-of-study list.
+        :param list fields: (optional) list of the fields to be returned.
+        :param str publication_date_or_year: (optional) restrict results to
+               the given range of publication date in the format
+               <start_date>:<end_date>, where dates are in the format
+               YYYY-MM-DD, YYYY-MM, or YYYY.
+        :param int min_citation_count: (optional) restrict results to papers
+               with at least the given number of citations.
+        :param str inserted_before: (optional) restrict results to papers
+               inserted before the given date (YYYY-MM-DD).
+        :param int limit: (optional) maximum number of results to return
+               (must be <= 1000).
+        :returns: list of snippet search results.
+        :rtype: :class:`List` of
+                :class:`semanticscholar.SnippetSearchResult.\
+                SnippetSearchResult`
+        """
+
+        if limit < 1 or limit > 1000:
+            raise ValueError(
+                "The limit parameter must be between 1 and 1000 inclusive."
+            )
+
+        if not fields:
+            fields = Paper.SEARCH_FIELDS + Snippet.FIELDS
+
+        base_url = self.api_url + self.BASE_PATH_GRAPH
+        url = f"{base_url}/snippet/search"
+
+        query += f"&limit={limit}"
+
+        query += f"&year={year}" if year else ""
+
+        if paper_ids:
+            paper_ids_str = ",".join(paper_ids)
+            query += f"&paperIds={paper_ids_str}"
+
+        if authors:
+            authors_str = ",".join(authors)
+            query += f"&authors={authors_str}"
+
+        if venue:
+            venue = ",".join(venue)
+            query += f"&venue={venue}"
+
+        if fields_of_study:
+            fields_of_study = ",".join(fields_of_study)
+            query += f"&fieldsOfStudy={fields_of_study}"
+
+        if publication_date_or_year:
+            single_date_regex = r"\d{4}(-\d{2}(-\d{2})?)?"
+            full_regex = r"^({0})?(:({0})?)?$".format(single_date_regex)
+            if not bool(re.fullmatch(full_regex, publication_date_or_year)):
+                raise ValueError(
+                    "The publication_date_or_year parameter must be in the "
+                    "format <start_date>:<end_date>, where dates are in the "
+                    "format YYYY-MM-DD, YYYY-MM, or YYYY."
+                )
+            else:
+                query += f"&publicationDateOrYear={publication_date_or_year}"
+
+        if min_citation_count:
+            query += f"&minCitationCount={min_citation_count}"
+
+        if inserted_before:
+            query += f"&insertedBefore={inserted_before}"
+
+        fields_str = ",".join(fields)
+        parameters = f"query={query}&fields={fields_str}"
+
+        data = await self._requester.get_data_async(url, parameters, self.auth_header)
+
+        if isinstance(data, dict) and "data" in data:
+            items = data["data"]
+        elif isinstance(data, list):
+            items = data
+        else:
+            items = []
+
+        return [SnippetSearchResult(item) for item in items]
 
     async def get_autocomplete(self, query: str) -> List[Autocomplete]:
         """
