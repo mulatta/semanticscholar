@@ -25,20 +25,28 @@
           tenacity
         ];
 
+        optional-dependencies = with python.pkgs; {
+          mcp = [ mcp ];
+        };
+
         nativeCheckInputs = with python.pkgs; [
           pytestCheckHook
           vcrpy
         ];
       };
+      semanticscholar-mcp = semanticscholar.overridePythonAttrs (old: {
+        pname = "semanticscholar-mcp";
+        dependencies = old.dependencies ++ old.optional-dependencies.mcp;
+      });
     in
     {
       packages = {
-        inherit semanticscholar;
+        inherit semanticscholar semanticscholar-mcp;
         default = semanticscholar;
       };
 
       checks = {
-        inherit semanticscholar;
+        inherit semanticscholar semanticscholar-mcp;
       };
     };
 }
