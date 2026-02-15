@@ -32,7 +32,7 @@ from semanticscholar.Tldr import Tldr
 test_vcr = vcr.VCR(
     cassette_library_dir="tests/data",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
-    record_mode=["new_episodes"],
+    record_mode="none",
     match_on=["uri", "method", "raw_body"],
 )
 
@@ -345,8 +345,9 @@ class SemanticScholarTest(unittest.TestCase):
             "field experiment in Mongolia",
         )
 
-    @test_vcr.use_cassette
-    def test_timeout(self):
+    @mock.patch("httpx.AsyncClient.request")
+    def test_timeout(self, mock_request):
+        mock_request.side_effect = TimeoutException("timed out")
         self.sch.timeout = 0.01
         self.assertEqual(self.sch.timeout, 0.01)
         self.assertRaises(
@@ -847,6 +848,48 @@ class SemanticScholarTest(unittest.TestCase):
             "https://ai2-s2ag.s3.amazonaws.com/deletes/2024-10-08-to-2024-10-15/papers/20241018_1.gz",
         )
 
+    @test_vcr.use_cassette
+    def test_search_snippet(self):
+        data = self.sch.search_snippet("transformer attention mechanism")
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+        self.assertIsInstance(data[0], SnippetSearchResult)
+        self.assertIsInstance(data[0].paper, Paper)
+        self.assertIsInstance(data[0].snippet, Snippet)
+        self.assertIsNotNone(data[0].paper.paperId)
+        self.assertIsNotNone(data[0].paper.title)
+        self.assertIsNotNone(data[0].snippet.text)
+        self.assertIsNotNone(data[0].score)
+
+    def test_search_snippet_limit_exceeded(self):
+        with self.assertRaises(ValueError):
+            self.sch.search_snippet("test", limit=1001)
+
+    def test_search_snippet_limit_zero(self):
+        with self.assertRaises(ValueError):
+            self.sch.search_snippet("test", limit=0)
+
+    def test_snippet_search_result_null_paper(self):
+        data = {"paper": None, "snippet": {"text": "test"}, "score": 0.5}
+        item = SnippetSearchResult(data)
+        self.assertIsNone(item.paper)
+        self.assertIsInstance(item.snippet, Snippet)
+
+    def test_snippet_search_result_null_snippet(self):
+        data = {"paper": {"paperId": "abc"}, "snippet": None, "score": 0.5}
+        item = SnippetSearchResult(data)
+        self.assertIsInstance(item.paper, Paper)
+        self.assertIsNone(item.snippet)
+
+    def test_snippet_partial_fields(self):
+        data = {"text": "partial snippet"}
+        item = Snippet(data)
+        self.assertEqual(item.text, "partial snippet")
+        self.assertIsNone(item.snippetKind)
+        self.assertIsNone(item.section)
+        self.assertIsNone(item.snippetOffset)
+        self.assertIsNone(item.annotations)
+
 
 class AsyncSemanticScholarTest(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
@@ -929,8 +972,9 @@ class AsyncSemanticScholarTest(unittest.IsolatedAsyncioTestCase):
             "field experiment in Mongolia",
         )
 
-    @test_vcr.use_cassette
-    async def test_timeout_async(self):
+    @mock.patch("httpx.AsyncClient.request")
+    async def test_timeout_async(self, mock_request):
+        mock_request.side_effect = TimeoutException("timed out")
         self.sch.timeout = 0.01
         self.assertEqual(self.sch.timeout, 0.01)
         with self.assertRaises(TimeoutException):
@@ -1418,6 +1462,24 @@ class AsyncSemanticScholarTest(unittest.IsolatedAsyncioTestCase):
             diff.delete_files[0],
             "https://ai2-s2ag.s3.amazonaws.com/deletes/2024-10-08-to-2024-10-15/papers/20241018_1.gz",
         )
+
+    @test_vcr.use_cassette
+    async def test_search_snippet_async(self):
+        data = await self.sch.search_snippet("transformer attention mechanism")
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+        self.assertIsInstance(data[0], SnippetSearchResult)
+        self.assertIsInstance(data[0].paper, Paper)
+        self.assertIsInstance(data[0].snippet, Snippet)
+        self.assertIsNotNone(data[0].score)
+
+    async def test_search_snippet_limit_exceeded_async(self):
+        with self.assertRaises(ValueError):
+            await self.sch.search_snippet("test", limit=1001)
+
+    async def test_search_snippet_limit_zero_async(self):
+        with self.assertRaises(ValueError):
+            await self.sch.search_snippet("test", limit=0)
 
 
 if __name__ == "__main__":
