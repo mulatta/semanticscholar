@@ -18,6 +18,7 @@ from semanticscholar.PublicationVenue import PublicationVenue
 from semanticscholar.Reference import Reference
 from semanticscholar.Release import Release
 from semanticscholar.SemanticScholar import SemanticScholar
+from semanticscholar.SnippetSearchResult import Snippet, SnippetSearchResult
 from semanticscholar.SemanticScholarException import (
     BadQueryParametersException,
     GatewayTimeoutException,
@@ -222,6 +223,26 @@ class SemanticScholarTest(unittest.TestCase):
         self.assertEqual(item.raw_data, data)
         self.assertEqual(str(item), str(data))
         self.assertEqual(item["contexts"], data["contexts"])
+        self.assertEqual(item.keys(), data.keys())
+        file.close()
+
+    def test_snippet_search_result(self):
+        file = open("tests/data/SnippetSearchResult.json", encoding="utf-8")
+        data = json.loads(file.read())
+        item = SnippetSearchResult(data)
+        self.assertEqual(str(item.paper), str(data["paper"]))
+        self.assertEqual(item.paper.paperId, data["paper"]["paperId"])
+        self.assertEqual(item.paper.title, data["paper"]["title"])
+        self.assertIsInstance(item.snippet, Snippet)
+        self.assertEqual(item.snippet.text, data["snippet"]["text"])
+        self.assertEqual(item.snippet.snippetKind, data["snippet"]["snippetKind"])
+        self.assertEqual(item.snippet.section, data["snippet"]["section"])
+        self.assertEqual(item.snippet.snippetOffset, data["snippet"]["snippetOffset"])
+        self.assertEqual(item.snippet.annotations, data["snippet"]["annotations"])
+        self.assertEqual(item.score, data["score"])
+        self.assertEqual(item.raw_data, data)
+        self.assertEqual(str(item), str(data))
+        self.assertEqual(item["score"], data["score"])
         self.assertEqual(item.keys(), data.keys())
         file.close()
 
