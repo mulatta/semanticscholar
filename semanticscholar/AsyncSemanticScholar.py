@@ -15,44 +15,45 @@ from semanticscholar.Reference import Reference
 from semanticscholar.Release import Release
 from semanticscholar.Autocomplete import Autocomplete
 
-logger = logging.getLogger('semanticscholar')
+logger = logging.getLogger("semanticscholar")
 
 
 class AsyncSemanticScholar:
-    '''
+    """
     Main class to retrieve data from Semantic Scholar Graph API asynchronously.
-    '''
+    """
 
-    DEFAULT_API_URL = 'https://api.semanticscholar.org'
+    DEFAULT_API_URL = "https://api.semanticscholar.org"
 
-    BASE_PATH_GRAPH = '/graph/v1'
-    BASE_PATH_RECOMMENDATIONS = '/recommendations/v1'
-    BASE_PATH_DATASETS = '/datasets/v1'
+    BASE_PATH_GRAPH = "/graph/v1"
+    BASE_PATH_RECOMMENDATIONS = "/recommendations/v1"
+    BASE_PATH_DATASETS = "/datasets/v1"
 
     auth_header = {}
 
     def __init__(
-                self,
-                timeout: int = 30,
-                api_key: str = None,
-                api_url: str = None,
-                debug: bool = False,
-                retry: bool = True,
-            ) -> None:
-        '''
+        self,
+        timeout: int = 30,
+        api_key: str = None,
+        api_url: str = None,
+        debug: bool = False,
+        retry: bool = True,
+    ) -> None:
+        """
         :param float timeout: (optional) an exception is raised
                if the server has not issued a response for timeout seconds.
         :param str api_key: (optional) private API key.
         :param str api_url: (optional) custom API url.
         :param bool debug: (optional) enable debug mode.
         :param bool retry: enable retry mode.
-        '''
+        """
 
         if debug:
             warnings.warn(
-                'The debug parameter is deprecated and will be removed in a \
-                future release. Use Python\'s standard logging in DEBUG level \
-                instead.')
+                "The debug parameter is deprecated and will be removed in a \
+                future release. Use Python's standard logging in DEBUG level \
+                instead."
+            )
 
         if api_url:
             self.api_url = api_url
@@ -60,7 +61,7 @@ class AsyncSemanticScholar:
             self.api_url = self.DEFAULT_API_URL
 
         if api_key:
-            self.auth_header = {'x-api-key': api_key}
+            self.auth_header = {"x-api-key": api_key}
 
         self._timeout = timeout
         self._retry = retry
@@ -69,38 +70,38 @@ class AsyncSemanticScholar:
 
     @property
     def timeout(self) -> int:
-        '''
+        """
         Timeout for server response in seconds.
 
         :type: :class:`int`
-        '''
+        """
         return self._timeout
 
     @timeout.setter
     def timeout(self, timeout: int) -> None:
-        '''
+        """
         :param int timeout:
-        '''
+        """
         self._timeout = timeout
         self._requester.timeout = timeout
 
     @property
     def debug(self) -> bool:
-        '''
+        """
         Enable/disable debug mode.
 
         :type: :class:`bool`
 
         .. deprecated:: 0.8.4
             Use Python\'s standard logging in DEBUG level instead.
-        '''
+        """
         return self._debug
 
     @debug.setter
     def debug(self, debug: bool) -> None:
-        '''
+        """
         :param bool debug:
-        '''
+        """
         self._debug = debug
         if self._debug:
             logging.basicConfig(level=logging.DEBUG)
@@ -109,27 +110,23 @@ class AsyncSemanticScholar:
 
     @property
     def retry(self) -> bool:
-        '''
+        """
         Enable/disable retry mode.
 
         :type: :class:`bool`
-        '''
+        """
         return self._retry
-    
+
     @retry.setter
     def retry(self, retry: bool) -> None:
-        '''
+        """
         :param bool retry:
-        '''
+        """
         self._retry = retry
         self._requester.retry = retry
 
-    async def get_paper(
-                self,
-                paper_id: str,
-                fields: list = None
-            ) -> Paper:
-        '''
+    async def get_paper(self, paper_id: str, fields: list = None) -> Paper:
+        """
         Paper lookup
 
         :calls: `GET /graph/v1/paper/{paper_id} \
@@ -149,16 +146,16 @@ class AsyncSemanticScholar:
         :returns: paper data
         :rtype: :class:`semanticscholar.Paper.Paper`
         :raises: ObjectNotFoundException: if Paper ID not found.
-        '''
+        """
 
         if not fields:
             fields = Paper.FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/paper/{paper_id}'
+        url = f"{base_url}/paper/{paper_id}"
 
-        fields = ','.join(fields)
-        parameters = f'&fields={fields}'
+        fields = ",".join(fields)
+        parameters = f"&fields={fields}"
 
         data = await self._requester.get_data_async(url, parameters, self.auth_header)
         paper = Paper(data)
@@ -166,12 +163,9 @@ class AsyncSemanticScholar:
         return paper
 
     async def get_papers(
-                self,
-                paper_ids: List[str],
-                fields: list = None,
-                return_not_found: bool = False
-            ) -> Union[List[Paper], Tuple[List[Paper], List[str]]]:
-        '''
+        self, paper_ids: List[str], fields: list = None, return_not_found: bool = False
+    ) -> Union[List[Paper], Tuple[List[Paper], List[str]]]:
+        """
         Get details for multiple papers at once
 
         :calls: `POST /graph/v1/paper/batch \
@@ -196,25 +190,25 @@ class AsyncSemanticScholar:
                 :class:`semanticscholar.Paper.Paper`, 
                 :class:`List` of :class:`str`]
         :raises: BadQueryParametersException: if no paper was found.
-        '''
+        """
 
         if len(paper_ids) > 500 or len(paper_ids) == 0:
-            raise ValueError(
-                'The paper_ids parameter must be a list of 1 to 500 IDs.')
+            raise ValueError("The paper_ids parameter must be a list of 1 to 500 IDs.")
 
         if not fields:
             fields = Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/paper/batch'
+        url = f"{base_url}/paper/batch"
 
-        fields = ','.join(fields)
-        parameters = f'&fields={fields}'
+        fields = ",".join(fields)
+        parameters = f"&fields={fields}"
 
-        payload = { "ids": paper_ids }
+        payload = {"ids": paper_ids}
 
         data = await self._requester.get_data_async(
-            url, parameters, self.auth_header, payload)
+            url, parameters, self.auth_header, payload
+        )
         papers = [Paper(item) for item in data if item is not None]
 
         not_found_ids = self._get_not_found_ids(paper_ids, papers)
@@ -227,12 +221,12 @@ class AsyncSemanticScholar:
     def _get_not_found_ids(self, paper_ids, papers):
 
         prefix_mapping = {
-            'ARXIV': 'ArXiv',
-            'MAG': 'MAG',
-            'ACL': 'ACL',
-            'PMID': 'PubMed',
-            'PMCID': 'PubMedCentral',
-            'CorpusId': 'CorpusId'
+            "ARXIV": "ArXiv",
+            "MAG": "MAG",
+            "ACL": "ACL",
+            "PMID": "PubMed",
+            "PMCID": "PubMedCentral",
+            "CorpusId": "CorpusId",
         }
         prefix_mapping = {v.lower(): k for k, v in prefix_mapping.items()}
 
@@ -242,10 +236,9 @@ class AsyncSemanticScholar:
             if paper.externalIds:
                 for prefix, value in paper.externalIds.items():
                     if prefix.lower() in prefix_mapping:
-                        found_ids.add(
-                            f'{prefix_mapping[prefix.lower()]}:{value}')
+                        found_ids.add(f"{prefix_mapping[prefix.lower()]}:{value}")
                     else:
-                        found_ids.add(f'{value}')
+                        found_ids.add(f"{value}")
         found_ids = {id.lower() for id in found_ids}
 
         not_found_ids = [id for id in paper_ids if id.lower() not in found_ids]
@@ -253,12 +246,9 @@ class AsyncSemanticScholar:
         return not_found_ids
 
     async def get_paper_authors(
-                self,
-                paper_id: str,
-                fields: list = None,
-                limit: int = 100
-            ) -> PaginatedResults:
-        '''
+        self, paper_id: str, fields: list = None, limit: int = 100
+    ) -> PaginatedResults:
+        """
         Get details about a paper's authors
 
         :calls: `POST /graph/v1/paper/{paper_id}/authors \
@@ -277,36 +267,35 @@ class AsyncSemanticScholar:
         :param list fields: (optional) list of the fields to be returned.
         :param int limit: (optional) maximum number of results to return 
                (must be <= 1000).
-        '''
+        """
 
         if limit < 1 or limit > 1000:
             raise ValueError(
-                'The limit parameter must be between 1 and 1000 inclusive.')
+                "The limit parameter must be between 1 and 1000 inclusive."
+            )
 
         if not fields:
-            fields = [item for item in Author.SEARCH_FIELDS
-                      if not item.startswith('papers')]
+            fields = [
+                item for item in Author.SEARCH_FIELDS if not item.startswith("papers")
+            ]
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/paper/{paper_id}/authors'
+        url = f"{base_url}/paper/{paper_id}/authors"
 
         results = await PaginatedResults.create(
-                requester=self._requester,
-                data_type=Author,
-                url=url,
-                fields=fields,
-                limit=limit
-            )
+            requester=self._requester,
+            data_type=Author,
+            url=url,
+            fields=fields,
+            limit=limit,
+        )
 
         return results
 
     async def get_paper_citations(
-                self,
-                paper_id: str,
-                fields: list = None,
-                limit: int = 100
-            ) -> PaginatedResults:
-        '''
+        self, paper_id: str, fields: list = None, limit: int = 100
+    ) -> PaginatedResults:
+        """
         Get details about a paper's citations
 
         :calls: `POST /graph/v1/paper/{paper_id}/citations \
@@ -325,35 +314,33 @@ class AsyncSemanticScholar:
         :param list fields: (optional) list of the fields to be returned.
         :param int limit: (optional) maximum number of results to return 
                (must be <= 1000).
-        '''
+        """
 
         if limit < 1 or limit > 1000:
             raise ValueError(
-                'The limit parameter must be between 1 and 1000 inclusive.')
+                "The limit parameter must be between 1 and 1000 inclusive."
+            )
 
         if not fields:
             fields = BaseReference.FIELDS + Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/paper/{paper_id}/citations'
+        url = f"{base_url}/paper/{paper_id}/citations"
 
         results = await PaginatedResults.create(
-                requester=self._requester,
-                data_type=Citation,
-                url=url,
-                fields=fields,
-                limit=limit
-            )
+            requester=self._requester,
+            data_type=Citation,
+            url=url,
+            fields=fields,
+            limit=limit,
+        )
 
         return results
 
     async def get_paper_references(
-                self,
-                paper_id: str,
-                fields: list = None,
-                limit: int = 100
-            ) -> PaginatedResults:
-        '''
+        self, paper_id: str, fields: list = None, limit: int = 100
+    ) -> PaginatedResults:
+        """
         Get details about a paper's references
 
         :calls: `POST /graph/v1/paper/{paper_id}/references \
@@ -372,45 +359,46 @@ class AsyncSemanticScholar:
         :param list fields: (optional) list of the fields to be returned.
         :param int limit: (optional) maximum number of results to return 
                (must be <= 1000).
-        '''
+        """
 
         if limit < 1 or limit > 1000:
             raise ValueError(
-                'The limit parameter must be between 1 and 1000 inclusive.')
+                "The limit parameter must be between 1 and 1000 inclusive."
+            )
 
         if not fields:
             fields = BaseReference.FIELDS + Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/paper/{paper_id}/references'
+        url = f"{base_url}/paper/{paper_id}/references"
 
         results = await PaginatedResults.create(
-                requester=self._requester,
-                data_type=Reference,
-                url=url,
-                fields=fields,
-                limit=limit
-            )
+            requester=self._requester,
+            data_type=Reference,
+            url=url,
+            fields=fields,
+            limit=limit,
+        )
 
         return results
 
     async def search_paper(
-                self,
-                query: str,
-                year: str = None,
-                publication_types: list = None,
-                open_access_pdf: bool = None,
-                venue: list = None,
-                fields_of_study: list = None,
-                fields: list = None,
-                publication_date_or_year: str = None,
-                min_citation_count: int = None,
-                limit: int = 100,
-                bulk: bool = False,
-                sort: str = None,
-                match_title: bool = False
-            ) -> Union[PaginatedResults, Paper]:
-        '''
+        self,
+        query: str,
+        year: str = None,
+        publication_types: list = None,
+        open_access_pdf: bool = None,
+        venue: list = None,
+        fields_of_study: list = None,
+        fields: list = None,
+        publication_date_or_year: str = None,
+        min_citation_count: int = None,
+        limit: int = 100,
+        bulk: bool = False,
+        sort: str = None,
+        match_title: bool = False,
+    ) -> Union[PaginatedResults, Paper]:
+        """
         Search for papers by keyword. Performs a search query based on the 
         S2 search relevance algorithm, or a bulk retrieval of basic paper 
         data without search relevance (if bulk=True). Paper relevance 
@@ -456,83 +444,79 @@ class AsyncSemanticScholar:
         :returns: query results.
         :rtype: :class:`semanticscholar.PaginatedResults.PaginatedResults` or 
             :class:`semanticscholar.Paper.Paper`
-        '''
+        """
 
         if limit < 1 or limit > 100:
-            raise ValueError(
-                'The limit parameter must be between 1 and 100 inclusive.')
+            raise ValueError("The limit parameter must be between 1 and 100 inclusive.")
 
         if not fields:
             fields = Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/paper/search'
-        
+        url = f"{base_url}/paper/search"
+
         if bulk:
-            url += '/bulk'
+            url += "/bulk"
             if sort:
-                query += f'&sort={sort}'
+                query += f"&sort={sort}"
         elif sort:
-            warnings.warn(
-                'The sort parameter is only used when bulk=True.')
+            warnings.warn("The sort parameter is only used when bulk=True.")
 
         if match_title:
-            url += '/match'
+            url += "/match"
             if bulk:
                 raise ValueError(
-                    'The match_title parameter is not allowed when bulk=True.')
+                    "The match_title parameter is not allowed when bulk=True."
+                )
 
-        query += f'&year={year}' if year else ''
+        query += f"&year={year}" if year else ""
 
         if publication_types:
-            publication_types = ','.join(publication_types)
-            query += f'&publicationTypes={publication_types}'
+            publication_types = ",".join(publication_types)
+            query += f"&publicationTypes={publication_types}"
 
-        query += '&openAccessPdf' if open_access_pdf else ''
+        query += "&openAccessPdf" if open_access_pdf else ""
 
         if venue:
-            venue = ','.join(venue)
-            query += f'&venue={venue}'
+            venue = ",".join(venue)
+            query += f"&venue={venue}"
 
         if fields_of_study:
-            fields_of_study = ','.join(fields_of_study)
-            query += f'&fieldsOfStudy={fields_of_study}'
+            fields_of_study = ",".join(fields_of_study)
+            query += f"&fieldsOfStudy={fields_of_study}"
 
         if publication_date_or_year:
-            single_date_regex = r'\d{4}(-\d{2}(-\d{2})?)?'
-            full_regex = r'^({0})?(:({0})?)?$'.format(single_date_regex)
+            single_date_regex = r"\d{4}(-\d{2}(-\d{2})?)?"
+            full_regex = r"^({0})?(:({0})?)?$".format(single_date_regex)
             if not bool(re.fullmatch(full_regex, publication_date_or_year)):
                 raise ValueError(
-                    'The publication_date_or_year parameter must be in the \
+                    "The publication_date_or_year parameter must be in the \
                     format <start_date>:<end_date>, where dates are in the \
-                    format YYYY-MM-DD, YYYY-MM, or YYYY.')
+                    format YYYY-MM-DD, YYYY-MM, or YYYY."
+                )
             else:
-                query += f'&publicationDateOrYear={publication_date_or_year}'
+                query += f"&publicationDateOrYear={publication_date_or_year}"
 
         if min_citation_count:
-            query += f'&minCitationCount={min_citation_count}'
-        
+            query += f"&minCitationCount={min_citation_count}"
+
         max_results = 10000000 if bulk else 1000
 
         results = await PaginatedResults.create(
-                self._requester,
-                Paper,
-                url,
-                query,
-                fields,
-                limit,
-                self.auth_header,
-                max_results=max_results
-            )
+            self._requester,
+            Paper,
+            url,
+            query,
+            fields,
+            limit,
+            self.auth_header,
+            max_results=max_results,
+        )
 
         return results if not match_title else results[0]
 
-    async def get_author(
-                self,
-                author_id: str,
-                fields: list = None
-            ) -> Author:
-        '''
+    async def get_author(self, author_id: str, fields: list = None) -> Author:
+        """
         Author lookup
 
         :calls: `GET /graph/v1/author/{author_id} \
@@ -543,16 +527,16 @@ class AsyncSemanticScholar:
         :returns: author data
         :rtype: :class:`semanticscholar.Author.Author`
         :raises: ObjectNotFoundException: if Author ID not found.
-        '''
+        """
 
         if not fields:
             fields = Author.FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/author/{author_id}'
+        url = f"{base_url}/author/{author_id}"
 
-        fields = ','.join(fields)
-        parameters = f'&fields={fields}'
+        fields = ",".join(fields)
+        parameters = f"&fields={fields}"
 
         data = await self._requester.get_data_async(url, parameters, self.auth_header)
         author = Author(data)
@@ -560,12 +544,9 @@ class AsyncSemanticScholar:
         return author
 
     async def get_authors(
-                self,
-                author_ids: List[str],
-                fields: list = None,
-                return_not_found: bool = False
-            ) -> Union[List[Author], Tuple[List[Author], List[str]]]:
-        '''
+        self, author_ids: List[str], fields: list = None, return_not_found: bool = False
+    ) -> Union[List[Author], Tuple[List[Author], List[str]]]:
+        """
         Get details for multiple authors at once
 
         :calls: `POST /graph/v1/author/batch \
@@ -579,25 +560,27 @@ class AsyncSemanticScholar:
                 :class:`semanticscholar.Author.Author`, 
                 :class:`List` of :class:`str`]
         :raises: BadQueryParametersException: if no author was found.
-        '''
+        """
 
         if len(author_ids) > 1000 or len(author_ids) == 0:
             raise ValueError(
-                'The author_ids parameter must be a list of 1 to 1000 IDs.')
+                "The author_ids parameter must be a list of 1 to 1000 IDs."
+            )
 
         if not fields:
             fields = Author.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/author/batch'
+        url = f"{base_url}/author/batch"
 
-        fields = ','.join(fields)
-        parameters = f'&fields={fields}'
+        fields = ",".join(fields)
+        parameters = f"&fields={fields}"
 
-        payload = { "ids": author_ids }
+        payload = {"ids": author_ids}
 
         data = await self._requester.get_data_async(
-            url, parameters, self.auth_header, payload)
+            url, parameters, self.auth_header, payload
+        )
         authors = [Author(item) for item in data if item is not None]
 
         found_ids = [author.authorId for author in authors]
@@ -609,12 +592,9 @@ class AsyncSemanticScholar:
         return authors if not return_not_found else (authors, not_found_ids)
 
     async def get_author_papers(
-                self,
-                author_id: str,
-                fields: list = None,
-                limit: int = 100
-            ) -> PaginatedResults:
-        '''
+        self, author_id: str, fields: list = None, limit: int = 100
+    ) -> PaginatedResults:
+        """
         Get details about a author's papers
 
         :calls: `POST /graph/v1/paper/{author_id}/papers \
@@ -633,35 +613,33 @@ class AsyncSemanticScholar:
         :param list fields: (optional) list of the fields to be returned.
         :param int limit: (optional) maximum number of results to return 
                (must be <= 1000).
-        '''
+        """
 
         if limit < 1 or limit > 1000:
             raise ValueError(
-                'The limit parameter must be between 1 and 1000 inclusive.')
+                "The limit parameter must be between 1 and 1000 inclusive."
+            )
 
         if not fields:
             fields = Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/author/{author_id}/papers'
+        url = f"{base_url}/author/{author_id}/papers"
 
         results = await PaginatedResults.create(
-                requester=self._requester,
-                data_type=Paper,
-                url=url,
-                fields=fields,
-                limit=limit
-            )
+            requester=self._requester,
+            data_type=Paper,
+            url=url,
+            fields=fields,
+            limit=limit,
+        )
 
         return results
 
     async def search_author(
-                self,
-                query: str,
-                fields: list = None,
-                limit: int = 100
-            ) -> PaginatedResults:
-        '''
+        self, query: str, fields: list = None, limit: int = 100
+    ) -> PaginatedResults:
+        """
         Search for authors by name
 
         :calls: `GET /graph/v1/author/search \
@@ -674,39 +652,40 @@ class AsyncSemanticScholar:
                (must be <= 1000).
         :returns: query results.
         :rtype: :class:`semanticscholar.PaginatedResults.PaginatedResults`
-        '''
+        """
 
         if limit < 1 or limit > 1000:
             raise ValueError(
-                'The limit parameter must be between 1 and 1000 inclusive.')
+                "The limit parameter must be between 1 and 1000 inclusive."
+            )
 
         if not fields:
             fields = Author.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_GRAPH
-        url = f'{base_url}/author/search'
+        url = f"{base_url}/author/search"
 
         results = await PaginatedResults.create(
-                self._requester,
-                Author,
-                url,
-                query,
-                fields,
-                limit,
-                self.auth_header,
-                max_results=1000
-            )
+            self._requester,
+            Author,
+            url,
+            query,
+            fields,
+            limit,
+            self.auth_header,
+            max_results=1000,
+        )
 
         return results
 
     async def get_recommended_papers(
-                self,
-                paper_id: str,
-                fields: list = None,
-                limit: int = 100,
-                pool_from: Literal["recent", "all-cs"] = "recent"
-            ) -> List[Paper]:
-        '''
+        self,
+        paper_id: str,
+        fields: list = None,
+        limit: int = 100,
+        pool_from: Literal["recent", "all-cs"] = "recent",
+    ) -> List[Paper]:
+        """
         Get recommended papers for a single positive example.
 
         :calls: `GET /recommendations/v1/papers/forpaper/{paper_id} \
@@ -729,38 +708,38 @@ class AsyncSemanticScholar:
                from. Must be either "recent" or "all-cs".
         :returns: list of recommendations.
         :rtype: :class:`List` of :class:`semanticscholar.Paper.Paper`
-        '''
+        """
 
         if pool_from not in ["recent", "all-cs"]:
             raise ValueError(
-                'The pool_from parameter must be either "recent" or "all-cs".')
+                'The pool_from parameter must be either "recent" or "all-cs".'
+            )
 
         if limit < 1 or limit > 500:
-            raise ValueError(
-                'The limit parameter must be between 1 and 500 inclusive.')
+            raise ValueError("The limit parameter must be between 1 and 500 inclusive.")
 
         if not fields:
             fields = Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_RECOMMENDATIONS
-        url = f'{base_url}/papers/forpaper/{paper_id}'
+        url = f"{base_url}/papers/forpaper/{paper_id}"
 
-        fields = ','.join(fields)
-        parameters = f'&fields={fields}&limit={limit}&from={pool_from}'
+        fields = ",".join(fields)
+        parameters = f"&fields={fields}&limit={limit}&from={pool_from}"
 
         data = await self._requester.get_data_async(url, parameters, self.auth_header)
-        papers = [Paper(item) for item in data['recommendedPapers']]
+        papers = [Paper(item) for item in data["recommendedPapers"]]
 
         return papers
 
     async def get_recommended_papers_from_lists(
-                self,
-                positive_paper_ids: List[str],
-                negative_paper_ids: List[str] = None,
-                fields: list = None,
-                limit: int = 100
-            ) -> List[Paper]:
-        '''
+        self,
+        positive_paper_ids: List[str],
+        negative_paper_ids: List[str] = None,
+        fields: list = None,
+        limit: int = 100,
+    ) -> List[Paper]:
+        """
         Get recommended papers for lists of positive and negative examples.
 
         :calls: `POST /recommendations/v1/papers/ \
@@ -776,32 +755,32 @@ class AsyncSemanticScholar:
                return (must be <= 500).
         :returns: list of recommendations.
         :rtype: :class:`List` of :class:`semanticscholar.Paper.Paper`
-        '''
+        """
 
         if limit < 1 or limit > 500:
-            raise ValueError(
-                'The limit parameter must be between 1 and 500 inclusive.')
+            raise ValueError("The limit parameter must be between 1 and 500 inclusive.")
 
         if not fields:
             fields = Paper.SEARCH_FIELDS
 
         base_url = self.api_url + self.BASE_PATH_RECOMMENDATIONS
-        url = f'{base_url}/papers/'
+        url = f"{base_url}/papers/"
 
-        fields = ','.join(fields)
-        parameters = f'&fields={fields}&limit={limit}'
+        fields = ",".join(fields)
+        parameters = f"&fields={fields}&limit={limit}"
 
         payload = {
             "positivePaperIds": positive_paper_ids,
-            "negativePaperIds": negative_paper_ids
+            "negativePaperIds": negative_paper_ids,
         }
 
         data = await self._requester.get_data_async(
-            url, parameters, self.auth_header, payload)
-        papers = [Paper(item) for item in data['recommendedPapers']]
+            url, parameters, self.auth_header, payload
+        )
+        papers = [Paper(item) for item in data["recommendedPapers"]]
 
         return papers
-    
+
     async def get_autocomplete(self, query: str) -> List[Autocomplete]:
         """
         Get autocomplete suggestions for a paper query.
@@ -815,14 +794,13 @@ class AsyncSemanticScholar:
         :rtype: :class:`List` of 
                 :class:`semanticscholar.Autocomplete.Autocomplete`
         """
-        
+
         base_url = self.api_url + self.BASE_PATH_GRAPH
         url = f"{base_url}/paper/autocomplete"
 
         parameters = f"query={query}"
 
-        data = await self._requester.get_data_async(
-            url, parameters, self.auth_header)
+        data = await self._requester.get_data_async(url, parameters, self.auth_header)
 
         if not data or "matches" not in data:
             return []
@@ -840,15 +818,13 @@ class AsyncSemanticScholar:
         :returns: list of available release ids.
         :rtype: :class:`List` of :class:`str`
         """
-        
+
         base_url = self.api_url + self.BASE_PATH_DATASETS
         url = f"{base_url}/release/"
 
-        release_ids = await self._requester.get_data_async(
-            url, "", self.auth_header)
+        release_ids = await self._requester.get_data_async(url, "", self.auth_header)
 
         return release_ids
-
 
     async def get_release(self, release_id: str) -> Release:
         """
@@ -862,20 +838,17 @@ class AsyncSemanticScholar:
         :returns: release information including datasets.
         :rtype: :class:`semanticscholar.Release.Release`
         """
-        
+
         base_url = self.api_url + self.BASE_PATH_DATASETS
         url = f"{base_url}/release/{release_id}"
 
-        data = await self._requester.get_data_async(
-            url, "", self.auth_header)
+        data = await self._requester.get_data_async(url, "", self.auth_header)
 
         return Release(data)
 
     async def get_dataset_download_links(
-            self, 
-            release_id: str, 
-            dataset_name: str
-        ) -> Dataset:
+        self, release_id: str, dataset_name: str
+    ) -> Dataset:
         """
         Get download links for a specific dataset in a release.
 
@@ -888,21 +861,17 @@ class AsyncSemanticScholar:
         :returns: dataset information including download links.
         :rtype: :class:`semanticscholar.Dataset.Dataset`
         """
-        
+
         base_url = self.api_url + self.BASE_PATH_DATASETS
         url = f"{base_url}/release/{release_id}/dataset/{dataset_name}"
 
-        data = await self._requester.get_data_async(
-            url, "", self.auth_header)
+        data = await self._requester.get_data_async(url, "", self.auth_header)
 
         return Dataset(data)
 
     async def get_dataset_diffs(
-            self, 
-            dataset_name: str,
-            start_release_id: str,
-            end_release_id: str
-        ) -> DatasetDiff:
+        self, dataset_name: str, start_release_id: str, end_release_id: str
+    ) -> DatasetDiff:
         """
         Get incremental diffs for a dataset between two releases.
 
@@ -920,11 +889,10 @@ class AsyncSemanticScholar:
                   and list of diffs.
         :rtype: :class:`semanticscholar.DatasetDiff.DatasetDiff`
         """
-        
+
         base_url = self.api_url + self.BASE_PATH_DATASETS
         url = f"{base_url}/diffs/{start_release_id}/to/{end_release_id}/{dataset_name}"
 
-        data = await self._requester.get_data_async(
-            url, "", self.auth_header)
+        data = await self._requester.get_data_async(url, "", self.auth_header)
 
         return DatasetDiff(data)
