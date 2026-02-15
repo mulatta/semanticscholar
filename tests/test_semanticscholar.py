@@ -33,7 +33,6 @@ test_vcr = vcr.VCR(
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
     record_mode=["new_episodes"],
     match_on=["uri", "method", "raw_body"],
-    drop_unused_requests=True,
 )
 
 
