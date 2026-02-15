@@ -6,7 +6,7 @@ from typing import List, Union
 
 import httpx
 from tenacity import retry as rerun
-from tenacity import retry_if_exception_type, stop_after_attempt, wait_fixed
+from tenacity import retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from semanticscholar.SemanticScholarException import (
     BadQueryParametersException,
@@ -93,7 +93,7 @@ class ApiRequester:
         )
 
     @rerun(
-        wait=wait_fixed(30),
+        wait=wait_exponential(multiplier=1, min=1, max=60),
         retry=retry_if_exception_type(ConnectionRefusedError),
         stop=stop_after_attempt(10),
     )
