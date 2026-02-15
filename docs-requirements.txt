@@ -1,5 +1,0 @@
-sphinx
-m2r2
-furo
-pypandoc_binary
-sphinx-copybutton
