@@ -13,6 +13,7 @@
             ../pyproject.toml
             ../README.md
             ../semanticscholar
+            ../tests
           ];
         };
 
@@ -24,7 +25,10 @@
           tenacity
         ];
 
-        doCheck = false;
+        nativeCheckInputs = with python.pkgs; [
+          pytestCheckHook
+          vcrpy
+        ];
       };
     in
     {
