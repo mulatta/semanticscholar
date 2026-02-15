@@ -5,7 +5,7 @@
       python = pkgs.python3;
       semanticscholar = python.pkgs.buildPythonApplication {
         pname = "semanticscholar";
-        version = "0.11.0";
+        version = "0.12.1";
         pyproject = true;
         src = pkgs.lib.fileset.toSource {
           root = ../.;

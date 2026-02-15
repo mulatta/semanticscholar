@@ -13,7 +13,7 @@ interactions:
       user-agent:
       - python-httpx/0.27.0
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount&fields=citationCount&offset=0&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount&fields=citationCount
   response:
     content: '{"total": 2674, "token": "PCOA3RZ3B2ACADAA2CVZBTQOSRHRDL3CDDNFEFQTA52THXS5333F4EGWYPHA5GYDXNQXDQHDWFVXN5ZTCYJUUINCSVWRJRUIMJMTCJHKS3MSPLFCKVBYP5X5ET4RKCA",
       "data": [{"paperId": "0020825b272b31f63359eadf0d714d49590095f4", "citationCount":
@@ -1066,7 +1066,7 @@ interactions:
       user-agent:
       - python-httpx/0.27.0
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount&token=PCOA3RZ3B2ACADAA2CVZBTQOSRHRDL3CDDNFEFQTA52THXS5333F4EGWYPHA5GYDXNQXDQHDWFVXN5ZTCYJUUINCSVWRJRUIMJMTCJHKS3MSPLFCKVBYP5X5ET4RKCA&fields=citationCount&offset=100&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount&token=PCOA3RZ3B2ACADAA2CVZBTQOSRHRDL3CDDNFEFQTA52THXS5333F4EGWYPHA5GYDXNQXDQHDWFVXN5ZTCYJUUINCSVWRJRUIMJMTCJHKS3MSPLFCKVBYP5X5ET4RKCA&fields=citationCount
   response:
     content: '{"total": 2674, "token": "PCOA3RZRB2ACADAF2CVZBTQOJBUALL3CDRNPUWKMDTKM26DXPHNXXSNUDU4J3VSAXBUQVJH5YE23V4IIAMVKFCXESWW4LHDDF7EVBMFYVPGVCYCWYG2H6P2AHILAC",
       "data": [{"paperId": "e3487f60ffa1e9bf5952de50f671a1c32477445b", "citationCount":
@@ -2119,7 +2119,7 @@ interactions:
       user-agent:
       - python-httpx/0.27.0
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount&token=PCOA3RZRB2ACADAF2CVZBTQOJBUALL3CDRNPUWKMDTKM26DXPHNXXSNUDU4J3VSAXBUQVJH5YE23V4IIAMVKFCXESWW4LHDDF7EVBMFYVPGVCYCWYG2H6P2AHILAC&fields=citationCount&offset=100&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount&token=PCOA3RZRB2ACADAF2CVZBTQOJBUALL3CDRNPUWKMDTKM26DXPHNXXSNUDU4J3VSAXBUQVJH5YE23V4IIAMVKFCXESWW4LHDDF7EVBMFYVPGVCYCWYG2H6P2AHILAC&fields=citationCount
   response:
     content: '{"total": 2674, "token": null, "data": [{"paperId": "5f0c0a50ea70c17f68d6e5d06daaa95defc8217e",
       "citationCount": 5}, {"paperId": "601011178c174bfc9b1c36220032ce8fb198530d",

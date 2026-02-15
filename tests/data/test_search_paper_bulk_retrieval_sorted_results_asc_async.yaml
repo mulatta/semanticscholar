@@ -13,7 +13,7 @@ interactions:
       user-agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&fields=citationCount&offset=0&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&fields=citationCount
   response:
     body:
       string: '{"total": 3027, "token": "PCOA3RZRB2ACADAAYCXZBTQOKAUCS7WFHCKNELRGB3VGN7F33R3C65GRYPHAC2YAXNQQSIH63A23XRIZEVHE2C5CU7LHWY7HLQDCCOJDFNS3E2FVRJC5RPY7DQFBJEQ",
@@ -1068,7 +1068,7 @@ interactions:
       user-agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&token=PCOA3RZRB2ACADAAYCXZBTQOKAUCS7WFHCKNELRGB3VGN7F33R3C65GRYPHAC2YAXNQQSIH63A23XRIZEVHE2C5CU7LHWY7HLQDCCOJDFNS3E2FVRJC5RPY7DQFBJEQ&fields=citationCount&offset=100&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&token=PCOA3RZRB2ACADAAYCXZBTQOKAUCS7WFHCKNELRGB3VGN7F33R3C65GRYPHAC2YAXNQQSIH63A23XRIZEVHE2C5CU7LHWY7HLQDCCOJDFNS3E2FVRJC5RPY7DQFBJEQ&fields=citationCount
   response:
     body:
       string: '{"total": 3027, "token": "PCOA3RZRB2ACADAAYCXZBTQOS3JEF7MKOEAGYFYTA52TH7S5N25ROWXNQ6OTWLAB5SDCSQHVY6XNDFKGDDC53SEMEOSZESK2ZYGZTNFC5KOKJ5FIFYXLA7J7DIGBIQQ",
@@ -2123,7 +2123,7 @@ interactions:
       user-agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&token=PCOA3RZRB2ACADAAYCXZBTQOS3JEF7MKOEAGYFYTA52TH7S5N25ROWXNQ6OTWLAB5SDCSQHVY6XNDFKGDDC53SEMEOSZESK2ZYGZTNFC5KOKJ5FIFYXLA7J7DIGBIQQ&fields=citationCount&offset=100&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&token=PCOA3RZRB2ACADAAYCXZBTQOS3JEF7MKOEAGYFYTA52TH7S5N25ROWXNQ6OTWLAB5SDCSQHVY6XNDFKGDDC53SEMEOSZESK2ZYGZTNFC5KOKJ5FIFYXLA7J7DIGBIQQ&fields=citationCount
   response:
     body:
       string: '{"total": 3027, "token": "PCOA3RZ3B2ADACAA2CVTJTAO7VIIEXWFHDIAESYTA52THXW5X3W33UFEB45RLNQAO3BREQH4WFVXNZZYQ4SOMTSIRFGVTMKE6KNFX2MZGET2YXSWNSNCUHG7B43M6FF7",
@@ -3178,7 +3178,7 @@ interactions:
       user-agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&token=PCOA3RZ3B2ADACAA2CVTJTAO7VIIEXWFHDIAESYTA52THXW5X3W33UFEB45RLNQAO3BREQH4WFVXNZZYQ4SOMTSIRFGVTMKE6KNFX2MZGET2YXSWNSNCUHG7B43M6FF7&fields=citationCount&offset=100&limit=100
+    uri: https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=kubernetes&sort=citationCount%3Aasc&token=PCOA3RZ3B2ADACAA2CVTJTAO7VIIEXWFHDIAESYTA52THXW5X3W33UFEB45RLNQAO3BREQH4WFVXNZZYQ4SOMTSIRFGVTMKE6KNFX2MZGET2YXSWNSNCUHG7B43M6FF7&fields=citationCount
   response:
     body:
       string: '{"total": 3027, "token": null, "data": [{"paperId": "ef3ce7732e3ab16bdb11fb167aa19ccaf9ea0ac5",
