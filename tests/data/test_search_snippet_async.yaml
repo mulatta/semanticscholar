@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.semanticscholar.org
+      user-agent:
+      - python-httpx/0.27.0
+    method: GET
+    uri: https://api.semanticscholar.org/graph/v1/snippet/search?query=transformer+attention+mechanism&limit=10&fields=abstract%2Cauthors%2CcitationCount%2CcitationStyles%2CcorpusId%2CexternalIds%2CfieldsOfStudy%2CinfluentialCitationCount%2CisOpenAccess%2Cjournal%2CopenAccessPdf%2CpaperId%2CpublicationDate%2CpublicationTypes%2CpublicationVenue%2CreferenceCount%2Cs2FieldsOfStudy%2Ctitle%2Curl%2Cvenue%2Cyear%2Csnippet.text%2Csnippet.snippetKind%2Csnippet.section%2Csnippet.snippetOffset%2Csnippet.annotations
+  response:
+    body:
+      string: '{"data":[{"paper":{"paperId":"649def34f8be52c8b66281af98ae884c09aef38b","title":"Attention
+        is All you Need","abstract":"The dominant sequence transduction models are
+        based on complex recurrent or convolutional neural networks.","year":2017,"citationCount":130000,"corpusId":2952867,"externalIds":{"ArXiv":"1706.03762"},"authors":[{"authorId":"40348417","name":"Ashish
+        Vaswani"}],"url":"https://www.semanticscholar.org/paper/649def34f8be52c8b66281af98ae884c09aef38b","venue":"NIPS","publicationDate":"2017-06-12","referenceCount":38,"citationStyles":null,"fieldsOfStudy":["Computer
+        Science"],"influentialCitationCount":10000,"isOpenAccess":true,"journal":null,"openAccessPdf":null,"publicationTypes":["Conference"],"publicationVenue":null,"s2FieldsOfStudy":[{"category":"Computer
+        Science","source":"s2-fos-model"}]},"snippet":{"text":"We propose a new simple
+        network architecture, the <em>Transformer</em>, based solely on attention
+        mechanisms.","snippetKind":"abstract","section":"Abstract","snippetOffset":42,"annotations":[{"start":52,"end":63,"type":"query_match"}]},"score":0.95}]}'
+    headers:
+      content-type:
+      - application/json
+    status:
+      code: 200
+      message: OK
+version: 1
