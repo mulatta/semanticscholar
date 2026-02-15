@@ -60,10 +60,9 @@ project = "semanticscholar"
 copyright = f"{datetime.date.today().year}, Daniel Silva"
 author = "Daniel Silva"
 
-# Get release version from setup.py
-with open("../../setup.py", "r") as setup_file:
-    setup_contents = setup_file.read()
-release = re.search(r"version=['\"]([^'\"]+)['\"]", setup_contents).group(1)
+# Get release version from pyproject.toml
+with open("../../pyproject.toml", "r") as f:
+    release = re.search(r'version = "([^"]+)"', f.read()).group(1)
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
