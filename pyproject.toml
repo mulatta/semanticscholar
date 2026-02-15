@@ -35,4 +35,7 @@ dependencies = [
 Homepage = "http://danielnsilva.com/semanticscholar"
 
 [project.optional-dependencies]
-test = ["vcrpy>=8.0"]
+test = ["pytest", "vcrpy>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
