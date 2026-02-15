@@ -1,0 +1,31 @@
+{
+    "paper": {
+        "paperId": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "corpusId": 2952867,
+        "url": "https://www.semanticscholar.org/paper/649def34f8be52c8b66281af98ae884c09aef38b",
+        "title": "Attention is All you Need",
+        "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks.",
+        "year": 2017,
+        "citationCount": 130000,
+        "externalIds": {
+            "ArXiv": "1706.03762",
+            "DBLP": "conf/nips/VaswaniSPUJGKP17",
+            "DOI": "10.5555/3295222.3295349",
+            "CorpusId": "2952867"
+        },
+        "authors": [
+            {"authorId": "40348417", "name": "Ashish Vaswani"},
+            {"authorId": "1846258", "name": "Noam M. Shazeer"}
+        ]
+    },
+    "snippet": {
+        "text": "We propose a new simple network architecture, the <em>Transformer</em>, based solely on attention mechanisms.",
+        "snippetKind": "abstract",
+        "section": "Abstract",
+        "snippetOffset": 42,
+        "annotations": [
+            {"start": 52, "end": 63, "type": "query_match"}
+        ]
+    },
+    "score": 0.95
+}
