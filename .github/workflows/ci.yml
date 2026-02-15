@@ -11,5 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: NixOS/nix-installer-action@main
-      - run: nix fmt -- --check
+      - run: nix fmt -- --ci
       - run: nix flake check
