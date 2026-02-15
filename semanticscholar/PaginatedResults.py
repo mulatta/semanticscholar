@@ -21,6 +21,7 @@ class PaginatedResults:
         limit: int = None,
         headers: dict = None,
         max_results: int = 10000,
+        token_pagination: bool = False,
     ) -> None:
 
         self._requester = requester
@@ -31,6 +32,7 @@ class PaginatedResults:
         self._limit = limit
         self._headers = headers
         self._max_results = max_results
+        self._token_pagination = token_pagination
 
         self._data = []
         self._total = 0
@@ -118,8 +120,10 @@ class PaginatedResults:
         return self._items[key]
 
     def _has_next_page(self) -> bool:
-        has_token = self._continuation_token is not None
+        if self._token_pagination:
+            return len(self._data) == 0 or self._continuation_token is not None
         next_page_offset = self._offset + self._limit
+        has_token = self._continuation_token is not None
         has_more_results = next_page_offset == self._next or has_token
         is_under_limit = next_page_offset < (self._max_results - 1)
         return has_more_results and is_under_limit
@@ -162,13 +166,14 @@ class PaginatedResults:
         fields = ",".join(self._fields)
         self._parameters += f"&fields={fields}"
 
-        offset = self._offset + self._limit
-        self._parameters += f"&offset={offset}"
+        if not self._token_pagination:
+            offset = self._offset + self._limit
+            self._parameters += f"&offset={offset}"
 
-        total = offset + self._limit
-        if total == 10000:
-            self._limit -= 1
-        self._parameters += f"&limit={self._limit}"
+            total = offset + self._limit
+            if total == 10000:
+                self._limit -= 1
+            self._parameters += f"&limit={self._limit}"
 
     def _update_params(self, results: Union[dict, List[dict]]) -> list:
 

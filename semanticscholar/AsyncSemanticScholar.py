@@ -512,6 +512,7 @@ class AsyncSemanticScholar:
             limit,
             self.auth_header,
             max_results=max_results,
+            token_pagination=bulk,
         )
 
         return results if not match_title else results[0]
